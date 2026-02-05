@@ -1,0 +1,77 @@
+:root {
+    --accent: #2ecc71;
+    --midnight: linear-gradient(135deg, #020b1a 0%, #051937 50%, #103063 100%);
+}
+
+* { box-sizing: border-box; outline: none; }
+body, html { 
+    margin: 0; padding: 0; font-family: 'Inter', sans-serif; 
+    background: var(--midnight); background-attachment: fixed;
+    color: white; height: 100vh; width: 100vw; overflow: hidden;
+}
+
+/* LANDING PAGE - FONT RESTORATION */
+#landing {
+    height: 100vh; display: flex; justify-content: center; align-items: center; 
+    text-align: center; position: fixed; width: 100%; z-index: 100; background: var(--midnight);
+}
+.main-title { font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 900; margin: 0; letter-spacing: -3px; }
+.voter-badge { border: 1px solid var(--accent); color: var(--accent); padding: 8px 20px; border-radius: 50px; font-size: 0.7rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 20px; display: inline-block; }
+.category-header { color: var(--accent); letter-spacing: 5px; font-size: 0.9rem; margin-bottom: 10px; font-weight: 900; }
+.subtitle { font-size: 1.2rem; opacity: 0.8; margin-top: 15px; }
+
+.start-btn { 
+    background: var(--accent); color: #000; font-weight: 900; border: none; padding: 18px 50px; 
+    border-radius: 100px; cursor: pointer; transition: 0.3s; margin-top: 40px;
+}
+.start-btn:hover { background: white !important; color: var(--accent) !important; transform: scale(1.05); }
+
+/* CARDS & SLIDE ANIMATION */
+.container { max-width: 420px; margin: 0 auto; height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; }
+.card {
+    background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px);
+    width: 100%; border-radius: 35px; padding: 40px; display: none; flex-direction: column; position: absolute;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1);
+}
+.card.active { display: flex; animation: slideIn 0.5s forwards; }
+.card.exit { display: flex; animation: slideOut 0.5s forwards; }
+@keyframes slideIn { from { opacity: 0; transform: translateX(60px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-60px); } }
+
+/* LOGIN INPUT GROWTH */
+.input-group { 
+    background: rgba(255,255,255,0.06); border-radius: 15px; margin-bottom: 15px; 
+    padding: 12px 18px; display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.input-group.focused { transform: scale(1.08); border-color: var(--accent); background: rgba(46, 204, 113, 0.1); }
+.input-group.shrunk { transform: scale(0.95); opacity: 0.5; }
+.input-group input { background: transparent; border: none; color: white; width: 100%; padding-left: 10px; font-size: 16px; }
+
+/* LOGIN BUTTON: GREEN TO WHITE HOVER */
+.enter-btn { 
+    background: var(--accent); color: black; font-weight: 900; border: none; 
+    width: 100%; padding: 18px; border-radius: 15px; cursor: pointer; margin-top: 15px; transition: 0.3s; 
+}
+.enter-btn:hover { background: white !important; color: black !important; }
+
+/* ARROWS: SLEEKER SIZE */
+.nav-btns { display: flex; gap: 12px; width: 100%; margin-top: 10px; }
+.arrow-btn { 
+    background: white; color: black; border: none; cursor: pointer; 
+    font-weight: 900; border-radius: 15px; transition: 0.3s; 
+    padding: 12px; flex: 1; font-size: 1.4rem;
+}
+.arrow-btn:hover { color: var(--accent) !important; transform: translateY(-2px); }
+
+/* DROPDOWN HOVER LOGIC */
+select { 
+    appearance: none; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); 
+    padding: 16px; border-radius: 15px; width: 100%; font-weight: 700; margin-bottom: 30px; cursor: pointer; transition: 0.3s;
+}
+select:hover { background: var(--accent); color: white; border-color: var(--accent); }
+select option { background: #051937; color: white; }
+
+.question { color: #cbd5e0; margin-bottom: 25px; font-size: 0.95rem; border-left: 3px solid var(--accent); padding-left: 12px; line-height: 1.4; }
+.bg-icon { position: absolute; top: -10px; right: -10px; font-size: 7rem; opacity: 0.05; transform: rotate(15deg); pointer-events: none; }
+.success-icon { font-size: 5rem; text-align: center; margin-bottom: 20px; }
