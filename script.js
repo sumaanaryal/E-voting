@@ -1,8 +1,8 @@
-// 1. Firebase Imports (CDN version for GitHub Pages)
+// 1. Firebase Imports (Module version for GitHub Pages)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-// 2. Your Web App's Firebase configuration
+// 2. Your Specific Config (Saved for you)
 const firebaseConfig = {
   apiKey: "AIzaSyCVtWzM5URktOLbSYadPDUW8fMURI2TE8w",
   authDomain: "e-voting2082.firebaseapp.com",
@@ -18,96 +18,69 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// --- YOUR ORIGINAL VOTING LOGIC ---
-let currentPage = 0;
+// 4. State Management
 const votes = { parent: '', voter: '', science: '', art: '', craft: '', overall: '' };
 
+// 5. Function: Display Control
+function showPage(pageId) {
+    document.querySelectorAll('.card').forEach(p => p.style.display = 'none');
+    const target = document.getElementById(pageId);
+    if (target) target.style.display = 'flex';
+}
+
+// 6. Function: Login Start
 function startApp() {
-    document.getElementById('landing').style.display = 'none';
-    document.getElementById('main-container').style.display = 'flex';
-    showPage(0);
-}
-
-function focusInput(type) {
-    const pGrp = document.getElementById('group-parent');
-    const iGrp = document.getElementById('group-id');
-    if(type === 'parent') {
-        pGrp.className = 'input-group focused';
-        iGrp.className = 'input-group shrunk';
-    } else {
-        iGrp.className = 'input-group focused';
-        pGrp.className = 'input-group shrunk';
-    }
-}
-
-function showPage(n) {
-    const current = document.querySelector('.card.active');
-    if (current) {
-        current.classList.replace('active', 'exit');
-        setTimeout(() => current.classList.remove('exit'), 500);
-    }
-    const next = document.getElementById(`page-${n}`) || document.getElementById('result');
-    setTimeout(() => {
-        next.classList.add('active');
-    }, 50);
-}
-
-function nextPage() {
-    if (currentPage === 0) {
-        const name = document.getElementById('parentName').value.trim();
-        const id = document.getElementById('voterId').value;
-        if (!name || !id || id < 1 || id > 400) {
-            alert("Please enter Name and Voter ID (1-400)");
-            return;
-        }
-        votes.parent = name;
-        votes.voter = id;
-    } else {
-        const keys = [null, 'science', 'art', 'craft', 'overall'];
-        if (keys[currentPage] && !votes[keys[currentPage]]) {
-            alert("Please make a selection.");
-            return;
-        }
-    }
-    if (currentPage < 4) {
-        currentPage++;
-        showPage(currentPage);
-    }
-}
-
-function prevPage() {
-    if (currentPage > 0) {
-        currentPage--;
-        showPage(currentPage);
-    }
-}
-
-function selectOption(s, v) { votes[s] = v; }
-
-// 4. UPDATED SUBMIT FUNCTION
-async function submitVote() {
-    if (!votes.overall) return alert("Select a rating.");
+    const pName = document.getElementById('parentName').value;
+    const vId = document.getElementById('voterId').value;
     
+    if (!pName || !vId) {
+        alert("Please enter both Name and Voter ID!");
+        return;
+    }
+    
+    votes.parent = pName;
+    votes.voter = vId;
+    showPage('page1');
+}
+
+// 7. Function: Selection Logic
+function selectOption(category, value) {
+    votes[category] = value;
+    
+    // Auto-advance after selection
+    setTimeout(() => {
+        if (category === 'science') showPage('page2');
+        else if (category === 'art') showPage('page3');
+        else if (category === 'craft') showPage('page4');
+        else if (category === 'overall') submitVote();
+    }, 300);
+}
+
+// 8. Function: Permanent Storage (The Cloud Part)
+async function submitVote() {
     try {
+        console.log("Saving vote...", votes);
         const voteRef = ref(db, 'votes');
-        const newVoteRef = push(voteRef);
         
-        await set(newVoteRef, {
+        // Push creates a unique ID for every voter automatically
+        await push(voteRef, {
             ...votes,
             timestamp: new Date().toLocaleString()
         });
 
+        // SUCCESS: Move to the result page
         showPage('result');
+        console.log("Data saved successfully!");
+
     } catch (error) {
         console.error("Firebase Error:", error);
-        alert("Connection error. Please check your internet and try again.");
+        alert("Submission failed! Error: " + error.message);
     }
 }
 
-// 5. EXPOSE TO WINDOW (Crucial for HTML Buttons)
+// 9. FIX: Expose functions to the HTML buttons
+// Since this is a 'module', we must attach functions to 'window' 
+// so buttons like onclick="startApp()" can find them.
 window.startApp = startApp;
-window.nextPage = nextPage;
-window.prevPage = prevPage;
 window.selectOption = selectOption;
 window.submitVote = submitVote;
-window.focusInput = focusInput;
