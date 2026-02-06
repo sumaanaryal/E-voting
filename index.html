@@ -3,111 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Voting Portal | Exhibition 2082</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <title>Exhibition E-Voting</title>
+    <style>
+        body { font-family: sans-serif; background: #001529; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: #112d4e; padding: 2rem; border-radius: 15px; display: none; flex-direction: column; width: 300px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .active { display: flex; }
+        input { padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
+        button { padding: 10px; margin: 5px; cursor: pointer; border-radius: 5px; border: none; background: #3f72af; color: white; font-weight: bold; }
+        .options button { background: #dbe2ef; color: #112d4e; width: 100%; }
+        .nav-btns { display: flex; justify-content: space-between; margin-top: 20px; }
+        .success-icon { font-size: 50px; color: #4caf50; }
+    </style>
 </head>
 <body>
 
-<section id="landing">
-    <div class="landing-content">
-        <div class="voter-badge">OFFICIAL E-VOTING SYSTEM</div>
-        <h2 class="category-header">SCIENCE <span class="dot">.</span> CRAFT <span class="dot">.</span> ART</h2>
-        <h1 class="main-title">Exhibition 2082</h1>
-        <p class="subtitle">Securely cast your vote for the best classroom project.</p>
-        <button onclick="startApp()" class="start-btn">GET STARTED</button>
-    </div>
-</section>
-
-<div class="container" id="main-container" style="display: none;">
-    <div class="card active" id="page-0">
-        <div class="voter-badge" style="margin-bottom: 10px;">VERIFICATION</div>
-        <h3>Secure Login</h3>
-        <div class="input-group" id="group-parent">
-            <span class="icon">👤</span>
-            <input type="text" id="parentName" placeholder="Parent Name" onfocus="focusInput('parent')" autocomplete="off">
-        </div>
-        <div class="input-group" id="group-id">
-            <span class="icon">🆔</span>
-            <input type="number" id="voterId" placeholder="Voter ID (1-400)" onfocus="focusInput('id')">
-        </div>
-        <button onclick="nextPage()" class="enter-btn">ENTER SYSTEM</button>
+    <div id="landing" class="card active">
+        <h2>OFFICIAL E-VOTING</h2>
+        <input type="text" id="parentName" placeholder="Parent's Name">
+        <input type="text" id="voterId" placeholder="Voter ID">
+        <button onclick="startApp()">GET STARTED</button>
     </div>
 
-    <div class="card" id="page-1">
-        <div class="bg-icon">🧪</div>
-        <h3>Science Exhibition</h3>
-        <p class="question">Which class did you like most for the science exhibition?</p>
-        <select onchange="selectOption('science', this.value)">
-            <option value="">Select Class</option>
-            <option value="Class 1">Class 1</option><option value="Class 2">Class 2</option>
-            <option value="Class 3">Class 3</option><option value="Class 4">Class 4</option>
-            <option value="Class 5">Class 5</option><option value="Class 6">Class 6</option>
-            <option value="Class 7">Class 7</option><option value="Class 9">Class 9</option>
-        </select>
+    <div id="page1" class="card">
+        <h3>Science Projects</h3>
+        <div class="options">
+            <button onclick="selectOption('science', 'Excellent')">Excellent</button>
+            <button onclick="selectOption('science', 'Good')">Good</button>
+            <button onclick="selectOption('science', 'Average')">Average</button>
+        </div>
+    </div>
+
+    <div id="page2" class="card">
+        <h3>Art Gallery</h3>
+        <div class="options">
+            <button onclick="selectOption('art', 'Excellent')">Excellent</button>
+            <button onclick="selectOption('art', 'Good')">Good</button>
+            <button onclick="selectOption('art', 'Average')">Average</button>
+        </div>
+    </div>
+
+    <div id="page3" class="card">
+        <h3>Craft Work</h3>
+        <div class="options">
+            <button onclick="selectOption('craft', 'Excellent')">Excellent</button>
+            <button onclick="selectOption('craft', 'Good')">Good</button>
+            <button onclick="selectOption('craft', 'Average')">Average</button>
+        </div>
+    </div>
+
+    <div id="page4" class="card">
+        <h3>Overall Experience</h3>
+        <div class="options">
+            <button onclick="selectOption('overall', '5 Stars')">⭐⭐⭐⭐⭐</button>
+            <button onclick="selectOption('overall', '4 Stars')">⭐⭐⭐⭐</button>
+            <button onclick="selectOption('overall', '3 Stars')">⭐⭐⭐</button>
+        </div>
         <div class="nav-btns">
-            <button onclick="prevPage()" class="arrow-btn">←</button>
-            <button onclick="nextPage()" class="arrow-btn">→</button>
+            <button onclick="showPage('page3')">⬅️ Back</button>
+            <button onclick="submitVote()" style="background: #4caf50;">Submit Vote ➔</button>
         </div>
     </div>
 
-    <div class="card" id="page-2">
-        <div class="bg-icon">🎨</div>
-        <h3>Art Exhibition</h3>
-        <p class="question">Which class did you like most for the art exhibition?</p>
-        <select onchange="selectOption('art', this.value)">
-            <option value="">Select Class</option>
-            <option value="Class 1">Class 1</option><option value="Class 2">Class 2</option>
-            <option value="Class 3">Class 3</option><option value="Class 4">Class 4</option>
-            <option value="Class 5">Class 5</option><option value="Class 6">Class 6</option>
-            <option value="Class 7">Class 7</option><option value="Class 9">Class 9</option>
-        </select>
-        <div class="nav-btns">
-            <button onclick="prevPage()" class="arrow-btn">←</button>
-            <button onclick="nextPage()" class="arrow-btn">→</button>
-        </div>
+    <div id="result" class="card">
+        <div class="success-icon">✔</div>
+        <h2>Vote Recorded!</h2>
+        <p>Thank you for your feedback.</p>
+        <button onclick="location.reload()">New Voter</button>
     </div>
 
-    <div class="card" id="page-3">
-        <div class="bg-icon">✂️</div>
-        <h3>Craft Exhibition</h3>
-        <p class="question">Which class did you like most for the craft exhibition?</p>
-        <select onchange="selectOption('craft', this.value)">
-            <option value="">Select Class</option>
-            <option value="Class 1">Class 1</option><option value="Class 2">Class 2</option>
-            <option value="Class 3">Class 3</option><option value="Class 4">Class 4</option>
-            <option value="Class 5">Class 5</option><option value="Class 6">Class 6</option>
-            <option value="Class 7">Class 7</option><option value="Class 9">Class 9</option>
-        </select>
-        <div class="nav-btns">
-            <button onclick="prevPage()" class="arrow-btn">←</button>
-            <button onclick="nextPage()" class="arrow-btn">→</button>
-        </div>
-    </div>
-
-    <div class="card" id="page-4">
-        <h3>⭐ Overall Rating</h3>
-        <p class="question">How would you rate your experience today?</p>
-        <select onchange="selectOption('overall', this.value)">
-            <option value="">Choose a rating</option>
-            <option value="1">1 - Poor</option><option value="2">2 - Fair</option>
-            <option value="3">3 - Good</option><option value="4">4 - Very Good</option>
-            <option value="5">5 - Excellent</option>
-        </select>
-        <div class="nav-btns">
-            <button onclick="prevPage()" class="arrow-btn">←</button>
-            <button onclick="submitVote()" class="arrow-btn">→</button>
-        </div>
-    </div>
-
-    <div class="card" id="result">
-        <div class="success-icon">🏆</div>
-        <h3>Vote Recorded</h3>
-        <p>Thank you for participating!</p>
-    </div>
-</div>
-
-<script type="module" src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
-
 </html>
