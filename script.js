@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-// YOUR REAL CONFIG
+// YOUR CONFIG (REMEMBERED)
 const firebaseConfig = {
   apiKey: "AIzaSyCVtWzM5URktOLbSYadPDUW8fMURI2TE8w",
   authDomain: "e-voting2082.firebaseapp.com",
@@ -12,50 +12,49 @@ const firebaseConfig = {
   appId: "1:546021327219:web:4517f75740c8d4b6a84506"
 };
 
-// Initialize
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Data Object
-let votes = { parent: '', voter: '', science: '', art: '', craft: '', overall: '' };
+// GLOBAL STATE
+let currentPage = 0;
+const votes = { parent: '', voter: '', science: '', art: '', craft: '', overall: '' };
 
-// NAVIGATION
-function showPage(pageId) {
-    document.querySelectorAll('.card').forEach(p => p.classList.remove('active'));
-    document.getElementById(pageId).classList.add('active');
+// 1. START APP (HIDE LANDING, SHOW CONTAINER)
+function startApp() {
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('main-container').style.display = 'flex';
 }
 
-// LOGIN LOGIC
-function startApp() {
-    const nameInput = document.getElementById('parentName').value.trim();
-    const idInput = document.getElementById('voterId').value.trim();
-
-    if (nameInput === "" || idInput === "") {
-        alert("Please enter Name and Voter ID!");
-        return;
+// 2. NEXT PAGE (WITH LOGIN VALIDATION)
+function nextPage() {
+    if (currentPage === 0) {
+        const name = document.getElementById('parentName').value.trim();
+        const id = document.getElementById('voterId').value.trim();
+        if (!name || !id) return alert("Please enter Name and Voter ID!");
+        votes.parent = name;
+        votes.voter = id;
     }
 
-    votes.parent = nameInput;
-    votes.voter = idInput;
-    showPage('page1');
+    document.getElementById(`page-${currentPage}`).classList.remove('active');
+    currentPage++;
+    document.getElementById(`page-${currentPage}`).classList.add('active');
 }
 
-// SELECTION LOGIC
+// 3. PREVIOUS PAGE
+function prevPage() {
+    document.getElementById(`page-${currentPage}`).classList.remove('active');
+    currentPage--;
+    document.getElementById(`page-${currentPage}`).classList.add('active');
+}
+
+// 4. SELECT OPTIONS (DROPDOWNS)
 function selectOption(category, value) {
     votes[category] = value;
-    
-    // Auto-advance for categories, except overall
-    if (category === 'science') showPage('page2');
-    if (category === 'art') showPage('page3');
-    if (category === 'craft') showPage('page4');
 }
 
-// FIREBASE SUBMIT
+// 5. SUBMIT TO FIREBASE
 async function submitVote() {
-    if (!votes.overall) {
-        alert("Please select an Overall Rating first!");
-        return;
-    }
+    if (!votes.overall) return alert("Please select an Overall Rating!");
 
     try {
         const voteRef = ref(db, 'votes');
@@ -64,15 +63,22 @@ async function submitVote() {
             timestamp: new Date().toLocaleString()
         });
         
-        showPage('result');
-    } catch (error) {
-        console.error(error);
-        alert("Connection Error! Vote not saved.");
+        // Success: Hide final card, show success
+        document.getElementById('page-4').classList.remove('active');
+        document.getElementById('result').classList.add('active');
+
+        // Reset for next user after 6 seconds
+        setTimeout(() => location.reload(), 6000);
+
+    } catch (e) {
+        console.error(e);
+        alert("Submission failed. Check your internet.");
     }
 }
 
-// ATTACH TO WINDOW (So HTML buttons can see them)
+// 6. ATTACH TO WINDOW (Crucial for onclick to work)
 window.startApp = startApp;
-window.showPage = showPage;
+window.nextPage = nextPage;
+window.prevPage = prevPage;
 window.selectOption = selectOption;
 window.submitVote = submitVote;
